@@ -1,14 +1,18 @@
-package org.evgen.bd_server.service;
+package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.exceptions.ResourceNotFoundException;
 import org.evgen.bd_server.model.Sport;
 import org.evgen.bd_server.repository.SportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-public class SportService{
+@CrossOrigin(origins = "http://localhost:8080")
+@RestController
+@RequestMapping("/data")
+public class SportController {
 
     @Autowired
     private SportRepository repository;
@@ -17,12 +21,16 @@ public class SportService{
         repository.save(sport);
     }
 
-    public List<Sport> readAll() {
+    @GetMapping("/sport")
+    public   List<Sport> readAll() {
         return repository.findAll();
     }
 
-    public Sport read(int id) {
-        return repository.getOne(id);
+    @GetMapping("/sport/{id}")
+    public ResponseEntity<Sport> read(@PathVariable Integer id) {
+        Sport sport = repository.findById(id)
+                .orElseThrow( () -> new ResourceNotFoundException("Employee not exist with id :" + id) );
+        return ResponseEntity.ok(sport);
     }
 
     public boolean update(Sport sport, int id) {
