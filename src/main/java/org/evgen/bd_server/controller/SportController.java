@@ -17,7 +17,8 @@ public class SportController {
     @Autowired
     private SportRepository repository;
 
-    public void create(Sport sport) {
+    @PostMapping("/sport")
+    public void create(@RequestBody Sport sport) {
         repository.save(sport);
     }
 
@@ -29,20 +30,24 @@ public class SportController {
     @GetMapping("/sport/{id}")
     public ResponseEntity<Sport> read(@PathVariable Integer id) {
         Sport sport = repository.findById(id)
-                .orElseThrow( () -> new ResourceNotFoundException("Employee not exist with id :" + id) );
+                .orElseThrow( () -> new ResourceNotFoundException("Sport not exist with id :" + id) );
         return ResponseEntity.ok(sport);
     }
 
-    public boolean update(Sport sport, int id) {
-        if (repository.existsById(id)) {
-            sport.setId(id);
-            repository.save(sport);
-            return true;
-        }
-        return false;
+    @PutMapping("/sport/{id}")
+    public ResponseEntity<Sport> update(@RequestBody Sport sport, @PathVariable Integer id) {
+        Sport sportOld = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sport not exist with id :" + id));
+
+        sportOld.setId(sport.getId());
+        sportOld.setName(sport.getName());
+
+        Sport updated = repository.save(sportOld);
+        return ResponseEntity.ok(updated);
     }
 
-    public boolean delete(int id) {
+    @DeleteMapping("sport/{id}")
+    public boolean delete(@PathVariable Integer id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
