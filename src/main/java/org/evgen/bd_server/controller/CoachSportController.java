@@ -1,13 +1,19 @@
 package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.dto.CSRequest;
 import org.evgen.bd_server.exceptions.ResourceNotFoundException;
+import org.evgen.bd_server.model.Coach;
 import org.evgen.bd_server.model.CoachSport;
+import org.evgen.bd_server.model.Sport;
+import org.evgen.bd_server.repository.CoachRepository;
 import org.evgen.bd_server.repository.CoachSportRepository;
+import org.evgen.bd_server.repository.SportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -15,15 +21,19 @@ import java.util.List;
 public class CoachSportController extends ResourceNotFoundHandler{
 
     private final CoachSportRepository repository;
+    private final CoachRepository coachRepository;
+    private final SportRepository sportRepository;
 
     @Autowired
-    public CoachSportController(CoachSportRepository repository) {
+    public CoachSportController(CoachSportRepository repository, CoachRepository coachRepository, SportRepository sportRepository) {
         this.repository = repository;
+        this.coachRepository = coachRepository;
+        this.sportRepository = sportRepository;
     }
 
     @GetMapping("/coach_sport")
-    public List<CoachSport> readAll() {
-        return repository.findAll();
+    public List<Map<String, Object>> readAll() {
+        return repository.getFormattedCoachSport();
     }
 
     @GetMapping("/coach_sport/{id}")
@@ -34,18 +44,32 @@ public class CoachSportController extends ResourceNotFoundHandler{
     }
 
     @PostMapping("/coach_sport")
-    public void create(@RequestBody CoachSport cs) {
-        repository.save(cs);
+    public void create(@RequestBody CSRequest cs) {
+        Coach coach = coachRepository.findById(cs.getCoachId())
+                .orElseThrow( () -> new ResourceNotFoundException("No such coach: " + cs.getCoachId()));
+        Sport sport = sportRepository.findById(cs.getSportId())
+                .orElseThrow( () -> new ResourceNotFoundException("No such sport: " + cs.getSportId()));
+
+        System.out.println(coach.getName() + " " + sport.getName());
+
+        CoachSport coachSport = new CoachSport();
+        coachSport.setCoach(coach);
+        coachSport.setSport(sport);
+
+        repository.save(coachSport);
     }
 
     @PutMapping("coach_sport/{id}")
-    public ResponseEntity<CoachSport> update(@RequestBody CoachSport cs, @PathVariable Integer id) {
+    public ResponseEntity<CoachSport> update(@RequestBody CSRequest cs, @PathVariable Integer id) {
         CoachSport csOld = repository.findById(id)
                 .orElseThrow( ()-> new ResourceNotFoundException("No such element: " + id));
+        Coach coach = coachRepository.findById(cs.getCoachId())
+                .orElseThrow( () -> new ResourceNotFoundException("No such coach: " + cs.getCoachId()));
+        Sport sport = sportRepository.findById(cs.getSportId())
+                .orElseThrow( () -> new ResourceNotFoundException("No such sport: " + cs.getSportId()));
 
-        csOld.setId(cs.getId());
-        csOld.setSport(cs.getSport());
-        csOld.setCoach(cs.getCoach());
+        csOld.setSport(sport);
+        csOld.setCoach(coach);
 
         CoachSport updated = repository.save(csOld);
         return ResponseEntity.ok(updated);
