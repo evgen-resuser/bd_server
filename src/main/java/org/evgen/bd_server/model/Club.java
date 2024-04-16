@@ -7,13 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name= "sport")
-public class Sport {
+@Table(name = "club")
+public class Club {
+
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
+    @Column
     private String name;
+
 }

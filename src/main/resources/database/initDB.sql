@@ -1,44 +1,37 @@
-DROP TABLE IF EXISTS sport CASCADE;
-CREATE TABLE sport (
+CREATE TABLE IF NOT EXISTS sport (
     id serial PRIMARY KEY,
     name text NOT NULL
 );
 
-DROP TABLE IF EXISTS coach CASCADE;
-CREATE TABLE coach (
+CREATE TABLE IF NOT EXISTS coach (
     id serial PRIMARY KEY,
     name text NOT NULL
 );
 
-DROP TABLE IF EXISTS coach_sport CASCADE;
-CREATE TABLE coach_sport (
+CREATE TABLE IF NOT EXISTS coach_sport (
 coach_id int REFERENCES coach(id) NOT NULL,
 sport_id int REFERENCES sport(id) NOT NULL,
 PRIMARY KEY(coach_id, sport_id)
 );
 
-DROP TABLE IF EXISTS club CASCADE;
-CREATE TABLE club (
+CREATE TABLE IF NOT EXISTS club (
     id serial PRIMARY KEY,
     name text NOT NULL
 );
 
-DROP TABLE IF EXISTS sportsman CASCADE;
-CREATE TABLE sportsman (
+CREATE TABLE IF NOT EXISTS sportsman (
     id serial PRIMARY KEY,
     name text NOT NULL,
     club_id int REFERENCES club(id)
 );
 
-DROP TABLE IF EXISTS coach_sportsman CASCADE;
-CREATE TABLE coach_sportsman (
+CREATE TABLE IF NOT EXISTS coach_sportsman (
     coach_id int REFERENCES coach(id),
     sportsman_id int REFERENCES sport(id),
     PRIMARY KEY(coach_id, sportsman_id)
 );
 
-DROP TABLE IF EXISTS sport_achievement CASCADE;
-CREATE TABLE sport_achievement (
+CREATE TABLE IF NOT EXISTS sport_achievement (
     id serial PRIMARY KEY,
     sportsman_id int REFERENCES sportsman(id) NOT NULL,
     name text NOT NULL,
@@ -46,8 +39,7 @@ CREATE TABLE sport_achievement (
     coach_id int REFERENCES coach(id)
 );
 
-DROP TABLE IF EXISTS place CASCADE;
-CREATE TABLE place (
+CREATE TABLE IF NOT EXISTS place (
                        id int NOT NULL,
                        type_id int NOT NULL,
                        PRIMARY KEY (id, type_id),
@@ -55,8 +47,7 @@ CREATE TABLE place (
                        address text
 );
 
-DROP TABLE IF EXISTS stadium CASCADE;
-CREATE TABLE stadium (
+CREATE TABLE IF NOT EXISTS stadium (
                          id serial,
                          type_id int DEFAULT 3,
                          is_covered boolean NOT NULL,
@@ -67,8 +58,7 @@ CREATE TABLE stadium (
                          FOREIGN KEY (id, type_id) REFERENCES place (id, type_id)
 );
 
-DROP TABLE IF EXISTS pool CASCADE;
-CREATE TABLE pool (
+CREATE TABLE IF NOT EXISTS pool (
                       id int NOT NULL UNIQUE,
                       type_id int DEFAULT 1,
                       length int NOT NULL,
@@ -79,8 +69,7 @@ CREATE TABLE pool (
                       CHECK (type_id = 1)
 );
 
-DROP TABLE IF EXISTS gym CASCADE;
-CREATE TABLE gym (
+CREATE TABLE IF NOT EXISTS gym (
                      id serial,
                      type_id int DEFAULT 2,
                      square numeric(5,2) NOT NULL,
@@ -89,8 +78,7 @@ CREATE TABLE gym (
                      CHECK (type_id = 2)
 );
 
-DROP TABLE IF EXISTS competition CASCADE;
-CREATE TABLE competition (
+CREATE TABLE IF NOT EXISTS competition (
                              id serial PRIMARY KEY,
                              place_id int,
                              place_type_id int,
