@@ -40,43 +40,96 @@ CREATE TABLE IF NOT EXISTS sport_achievement (
 );
 
 CREATE TABLE IF NOT EXISTS place (
-                       id int NOT NULL,
-                       type_id int NOT NULL,
-                       PRIMARY KEY (id, type_id),
-                       name text,
-                       address text
+                                     id int NOT NULL,
+                                     type_id int NOT NULL,
+                                     PRIMARY KEY (id, type_id),
+                                     name text,
+                                     address text,
+                                     stadium_is_covered boolean,
+                                     stadium_places_count int,
+                                     stadium_square numeric(5,2),
+                                     pool_length int,
+                                     pool_depth int,
+                                     pool_lanes_count int,
+                                     gym_square numeric(5,2)
 );
 
-CREATE TABLE IF NOT EXISTS stadium (
-                         id serial,
-                         type_id int DEFAULT 3,
-                         is_covered boolean NOT NULL,
-                         places_count int NOT NULL,
-                         square numeric(5,2) NOT NULL,
-                         PRIMARY KEY (id, type_id),
-                         CHECK (type_id = 3),
-                         FOREIGN KEY (id, type_id) REFERENCES place (id, type_id)
-);
+CREATE OR REPLACE FUNCTION check_stadium_values()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.type_id = 3 THEN
+        IF NEW.stadium_places_count <= 0 THEN
+            RAISE EXCEPTION 'Для стадиона stadium_places_count должен быть больше 0';
+        END IF;
+        IF NEW.stadium_square <= 0 THEN
+            RAISE EXCEPTION 'Для стадиона stadium_square должен быть больше 0';
+        END IF;
+        IF NEW.pool_length IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 3 нельзя указать значение pool_length';
+        END IF;
+        IF NEW.pool_depth IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 3 нельзя указать значение pool_depth';
+        END IF;
+        IF NEW.pool_lanes_count IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 3 нельзя указать значение pool_lanes_count';
+        END IF;
+        IF NEW.gym_square IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 3 нельзя указать значение gym_square';
+        END IF;
+    ELSEIF NEW.type_id = 1 THEN
+        IF NEW.pool_lanes_count <= 0 THEN
+            RAISE EXCEPTION 'Для бассейна lanes_count должен быть больше нуля';
+        END IF;
+        IF NEW.pool_depth <= 0 THEN
+            RAISE EXCEPTION 'Для бассейна pool_depth должен быть больше нуля';
+        END IF;
+        IF NEW.pool_length <= 0 THEN
+            RAISE EXCEPTION 'Для бассейна pool_length должен быть больше нуля';
+        END IF;
+        IF NEW.stadium_is_covered IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 1 нельзя указать значение stadium_is_covered';
+        END IF;
+        IF NEW.stadium_places_count IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 1 нельзя указать значение stadium_places_count';
+        END IF;
+        IF NEW.stadium_square IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 1 нельзя указать значение stadium_square';
+        END IF;
+        IF NEW.gym_square IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 1 нельзя указать значение gym_square';
+        END IF;
+    ELSEIF NEW.type_id = 2 THEN
+        IF NEW.gym_square <= 0 THEN
+            RAISE EXCEPTION 'Для зала gym_square должен быть больше 0';
+        end if;
+        IF NEW.stadium_is_covered IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение stadium_is_covered';
+        END IF;
+        IF NEW.stadium_places_count IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение stadium_places_count';
+        END IF;
+        IF NEW.stadium_square IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение stadium_square';
+        END IF;
+        IF NEW.pool_length IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение pool_length';
+        END IF;
+        IF NEW.pool_depth IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение pool_depth';
+        END IF;
+        IF NEW.pool_lanes_count IS NOT NULL THEN
+            RAISE EXCEPTION 'Для type_id = 2 нельзя указать значение pool_lanes_count';
+        END IF;
+    END IF;
 
-CREATE TABLE IF NOT EXISTS pool (
-                      id int NOT NULL UNIQUE,
-                      type_id int DEFAULT 1,
-                      length int NOT NULL,
-                      depth int NOT NULL,
-                      lanes_count int DEFAULT 1,
-                      PRIMARY KEY (id, type_id),
-                      FOREIGN KEY (id, type_id) REFERENCES place(id, type_id),
-                      CHECK (type_id = 1)
-);
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
 
-CREATE TABLE IF NOT EXISTS gym (
-                     id serial,
-                     type_id int DEFAULT 2,
-                     square numeric(5,2) NOT NULL,
-                     PRIMARY KEY (id, type_id),
-                     FOREIGN KEY (id, type_id) REFERENCES place(id, type_id),
-                     CHECK (type_id = 2)
-);
+CREATE TRIGGER check_stadium_values_trigger
+    BEFORE INSERT OR UPDATE ON place
+    FOR EACH ROW
+EXECUTE FUNCTION check_stadium_values();
 
 CREATE TABLE IF NOT EXISTS competition (
                              id serial PRIMARY KEY,
@@ -88,3 +141,8 @@ CREATE TABLE IF NOT EXISTS competition (
                              snd_id int REFERENCES sportsman(id),
                              thd_id int REFERENCES sportsman(id)
 );
+
+INSERT INTO place(id, type_id, name, address, stadium_is_covered, stadium_places_count, stadium_square) VALUES
+    (1, 3, 'Стадион школы №228', 'Ленина, 1', true, 75, 100),
+    (2, 3, 'Центральный стадион', 'Победы, 14', false, 250, 300);
+
