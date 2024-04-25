@@ -126,10 +126,10 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_stadium_values_trigger
-    BEFORE INSERT OR UPDATE ON place
-    FOR EACH ROW
-EXECUTE FUNCTION check_stadium_values();
+-- CREATE TRIGGER check_stadium_values_trigger
+--     BEFORE INSERT OR UPDATE ON place
+--     FOR EACH ROW
+-- EXECUTE FUNCTION check_stadium_values();
 
 CREATE TABLE IF NOT EXISTS competition (
                              id serial PRIMARY KEY,
@@ -141,8 +141,3 @@ CREATE TABLE IF NOT EXISTS competition (
                              snd_id int REFERENCES sportsman(id),
                              thd_id int REFERENCES sportsman(id)
 );
-
-INSERT INTO place(id, type_id, name, address, stadium_is_covered, stadium_places_count, stadium_square) VALUES
-    (1, 3, 'Стадион школы №228', 'Ленина, 1', true, 75, 100),
-    (2, 3, 'Центральный стадион', 'Победы, 14', false, 250, 300);
-
