@@ -11,6 +11,9 @@ import java.io.Serializable;
 @Embeddable
 public class PlaceId implements Serializable {
 
+    private int id;
+    private int typeId;
+
     public PlaceId(){}
 
     public PlaceId(int typeId) {
@@ -23,7 +26,13 @@ public class PlaceId implements Serializable {
         this.typeId = typeId;
     }
 
-    private int id;
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id+typeId);
+    }
 
-    private int typeId;
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
