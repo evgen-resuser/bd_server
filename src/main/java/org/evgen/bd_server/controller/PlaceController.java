@@ -144,7 +144,7 @@ public class PlaceController extends ResourceNotFoundHandler{
         return ResponseEntity.ok(updated);
     }
 
-    @PutMapping("place/stadium/{id}")
+    @PutMapping("place/pool/{id}")
     public ResponseEntity<Place> updatePoolById(@PathVariable Integer id,
                                                 @RequestBody PoolRequest request) {
         PlaceId placeId = new PlaceId(id, POOL_TYPE_ID);
