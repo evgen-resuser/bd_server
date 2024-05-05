@@ -1,8 +1,10 @@
 package org.evgen.bd_server.repository;
 
+import org.evgen.bd_server.model.Coach;
 import org.evgen.bd_server.model.CoachSport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -12,4 +14,5 @@ public interface CoachSportRepository extends JpaRepository<CoachSport, Integer>
             "FROM Sport s, Coach c, CoachSport cs " +
             "WHERE cs.coach = c AND cs.sport = s")
     List<Map<String, Object>> getFormattedCoachSport();
+
 }

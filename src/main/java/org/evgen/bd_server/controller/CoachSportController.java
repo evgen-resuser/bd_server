@@ -1,5 +1,6 @@
 package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.Consts;
 import org.evgen.bd_server.dto.CSRequest;
 import org.evgen.bd_server.exceptions.ResourceNotFoundException;
 import org.evgen.bd_server.model.Coach;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = Consts.FRONT)
 @RestController
 @RequestMapping("/data")
 public class CoachSportController extends ResourceNotFoundHandler{
@@ -49,8 +50,6 @@ public class CoachSportController extends ResourceNotFoundHandler{
                 .orElseThrow( () -> new ResourceNotFoundException("No such coach: " + cs.getCoachId()));
         Sport sport = sportRepository.findById(cs.getSportId())
                 .orElseThrow( () -> new ResourceNotFoundException("No such sport: " + cs.getSportId()));
-
-        System.out.println(coach.getName() + " " + sport.getName());
 
         CoachSport coachSport = new CoachSport();
         coachSport.setCoach(coach);

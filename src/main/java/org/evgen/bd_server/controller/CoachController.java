@@ -1,5 +1,6 @@
 package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.Consts;
 import org.evgen.bd_server.exceptions.ResourceNotFoundException;
 import org.evgen.bd_server.model.Coach;
 import org.evgen.bd_server.repository.CoachRepository;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = Consts.FRONT)
 @RestController
 @RequestMapping("/data")
 public class CoachController extends ResourceNotFoundHandler {

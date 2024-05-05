@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS sportsman (
 );
 
 CREATE TABLE IF NOT EXISTS coach_sportsman (
+    id serial PRIMARY KEY,
     coach_id int REFERENCES coach(id),
-    sportsman_id int REFERENCES sport(id),
-    PRIMARY KEY(coach_id, sportsman_id)
+    sportsman_id int REFERENCES sport(id)
 );
 
 CREATE TABLE IF NOT EXISTS sport_achievement (
@@ -126,10 +126,10 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
--- CREATE TRIGGER check_stadium_values_trigger
---     BEFORE INSERT OR UPDATE ON place
---     FOR EACH ROW
--- EXECUTE FUNCTION check_stadium_values();
+CREATE TRIGGER check_stadium_values_trigger
+    BEFORE INSERT OR UPDATE ON place
+    FOR EACH ROW
+EXECUTE FUNCTION check_stadium_values();
 
 CREATE TABLE IF NOT EXISTS competition (
                              id serial PRIMARY KEY,
@@ -139,5 +139,14 @@ CREATE TABLE IF NOT EXISTS competition (
                              sport_id int REFERENCES sport(id) NOT NULL,
                              fst_id int REFERENCES sportsman(id) NOT NULL,
                              snd_id int REFERENCES sportsman(id),
-                             thd_id int REFERENCES sportsman(id)
+                             thd_id int REFERENCES sportsman(id),
+                             date date NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS sport_sportsman (
+    sportsman_id int REFERENCES sportsman(id) NOT NULL ,
+    sport_id int REFERENCES sport(id) NOT NULL ,
+    id serial PRIMARY KEY
+);
+
+

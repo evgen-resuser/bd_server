@@ -1,5 +1,6 @@
 package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.Consts;
 import org.evgen.bd_server.dto.AchievementRequest;
 import org.evgen.bd_server.exceptions.ResourceNotFoundException;
 import org.evgen.bd_server.model.Coach;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = Consts.FRONT)
 @RequestMapping("/data")
 public class AchievementController extends ResourceNotFoundHandler {
 

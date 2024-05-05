@@ -1,5 +1,6 @@
 package org.evgen.bd_server.controller;
 
+import org.evgen.bd_server.Consts;
 import org.evgen.bd_server.dto.GymRequest;
 import org.evgen.bd_server.dto.PoolRequest;
 import org.evgen.bd_server.dto.StadiumRequest;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = Consts.FRONT)
 @RestController
 @RequestMapping("/data")
 public class PlaceController extends ResourceNotFoundHandler{
@@ -35,29 +36,14 @@ public class PlaceController extends ResourceNotFoundHandler{
         return repository.findAll();
     }
 
-    @GetMapping("/place/stadium")
-    public List<Map<PlaceId, Object>> readAllStadiums() {
-        return repository.getStadiums();
-    }
-
     @GetMapping("/place/stadium/{id}")
     public Map<PlaceId, Object> readStadiumById(@PathVariable Integer id) {
         return repository.getStadiumById(id);
     }
 
-    @GetMapping("/place/pool")
-    public List<Map<PlaceId, Object>> readAllPools() {
-        return repository.getPools();
-    }
-
     @GetMapping("/place/pool/{id}")
     public Map<PlaceId, Object> readPoolById(@PathVariable Integer id) {
         return repository.getPoolById(id);
-    }
-
-    @GetMapping("/place/gym")
-    public List<Map<PlaceId, Object>> readAllGyms() {
-        return repository.getGyms();
     }
 
     @GetMapping("/place/gym/{id}")
