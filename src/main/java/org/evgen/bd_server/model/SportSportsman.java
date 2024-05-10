@@ -10,13 +10,16 @@ import lombok.Setter;
 @Table(name = "sport_sportsman")
 public class SportSportsman {
 
-    @Column(name = "sportsman_id")
-    private Integer sportsmanId;
-
-    @Column(name = "sport_id")
-    private Integer sportId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "sportsman_id", referencedColumnName = "id")
+    private Sportsman sportsmanId;
+
+    @ManyToOne
+    @JoinColumn(name = "sport_id", referencedColumnName = "id")
+    private Sport sportId;
+
 }

@@ -15,4 +15,9 @@ public interface CoachSportRepository extends JpaRepository<CoachSport, Integer>
             "WHERE cs.coach = c AND cs.sport = s")
     List<Map<String, Object>> getFormattedCoachSport();
 
+    @Query("SELECT cs.coach " +
+            "FROM CoachSport cs " +
+            "WHERE cs.sport.id = :sport  ")
+    List<Object> getCoachesBySport(@Param("sport") Integer sportId);
+
 }

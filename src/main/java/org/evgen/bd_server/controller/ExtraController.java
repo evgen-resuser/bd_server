@@ -1,7 +1,6 @@
 package org.evgen.bd_server.controller;
 
 import org.evgen.bd_server.Consts;
-import org.evgen.bd_server.model.Coach;
 import org.evgen.bd_server.model.SportSportsman;
 import org.evgen.bd_server.model.place.PlaceId;
 import org.evgen.bd_server.repository.*;
@@ -85,7 +84,7 @@ public class ExtraController {
     }
 
     @GetMapping("/sportsman/bySport")
-    public List<Map<String, Object>> findSportsmanBySport(
+    public List<Object> findSportsmanBySport(
             @RequestParam("sport") Integer sportId,
             @RequestParam(value = "discharge", defaultValue = "") String charge
     ) {
@@ -94,17 +93,36 @@ public class ExtraController {
             System.out.println(sportId.getClass());
             return sportSportsmanRepository.findBySport(sportId);
         }
-        return sportSportsmanRepository.findBySportAndCharge(sportId, charge);
+        return sportSportsmanRepository.findBySportAndDischarge(sportId, charge);
     }
 
-//    @GetMapping("/sportsman/twoAndMore")
-//    public List<Object> findTwoAndMoreSports() {
-//        return sportSportsmanRepository.findMoreThanOneSport();
-//    }
+    @GetMapping("/sportsman/twoAndMore")
+    public List<Object> findTwoAndMoreSports() {
+        return sportSportsmanRepository.findMoreThanOneSport();
+    }
+
+    @GetMapping("/sportsman/sports")
+    public List<SportSportsman> getAll() {
+        return sportSportsmanRepository.findAll();
+    }
 
     @GetMapping("/sportsman/coaches")
     public List<Map<String, Object>> findAllCoachesById(@RequestParam("id") Integer id){
         return coachSportsmanRepository.getCoachesById(id);
+    }
+
+    @GetMapping("/coach/bySport")
+    public List<Object> getCoachesBySport(@RequestParam("id") Integer id){
+        if (!sportRepository.existsById(id)) return Collections.emptyList();
+        return coachSportRepository.getCoachesBySport(id);
+    }
+
+    @GetMapping("/coach/sportsmen")
+    public List<Object> findAllSportsmenById(@RequestParam("id") Integer id,
+                                                @RequestParam(value = "disch", defaultValue = "") String discharge){
+        if (!discharge.isEmpty())
+            return coachSportsmanRepository.getSportsmenByIdDischarge(id, discharge);
+        return coachSportsmanRepository.getSportsmenById(id);
     }
 
 }

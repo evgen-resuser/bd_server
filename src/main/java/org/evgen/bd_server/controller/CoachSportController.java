@@ -33,8 +33,13 @@ public class CoachSportController extends ResourceNotFoundHandler{
     }
 
     @GetMapping("/coach_sport")
-    public List<Map<String, Object>> readAll() {
+    public List<Map<String, Object>> readAllFormatted() {
         return repository.getFormattedCoachSport();
+    }
+
+    @GetMapping("/coach_sport1")
+    public List<CoachSport> readAll() {
+        return repository.findAll();
     }
 
     @GetMapping("/coach_sport/{id}")
