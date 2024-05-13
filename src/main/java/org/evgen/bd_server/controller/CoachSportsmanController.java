@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = Consts.FRONT)
 @RestController
@@ -82,6 +83,17 @@ public class CoachSportsmanController {
 
         CoachSportsman updated = repository.save(csOld);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/coach_sportsman")
+    public boolean delete(@RequestBody Map<String, Integer> request){
+        Integer sportsmanId = request.get("sportsmanId");
+        Integer coachId = request.get("coachId");
+
+        CoachSportsman entity = repository.findBySportsmanIdAndCoachId(coachId, sportsmanId);
+        if (entity == null) return false;
+        repository.delete(entity);
+        return true;
     }
 
 }

@@ -79,9 +79,10 @@ public class CoachSportController extends ResourceNotFoundHandler{
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("coach_sport/{id}")
-    public boolean delete(@PathVariable Integer id) {
-        if (repository.existsById(id)){
+    @DeleteMapping("coach_sport")
+    public boolean delete(@RequestBody CSRequest request) {
+        Integer id = repository.getIdBySportCoach(request.getCoachId(), request.getSportId());
+        if (id != null){
             repository.deleteById(id);
             return true;
         }

@@ -140,7 +140,8 @@ CREATE TABLE IF NOT EXISTS competition (
                              fst_id int REFERENCES sportsman(id) NOT NULL,
                              snd_id int REFERENCES sportsman(id),
                              thd_id int REFERENCES sportsman(id),
-                             date date NOT NULL
+                             date date NOT NULL,
+                            organize text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS sport_sportsman (

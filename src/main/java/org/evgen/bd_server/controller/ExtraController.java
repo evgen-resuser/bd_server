@@ -25,13 +25,14 @@ public class ExtraController {
     private final SportsmanRepository sportsmanRepository;
     private final SportSportsmanRepository sportSportsmanRepository;
     private final CoachSportsmanRepository coachSportsmanRepository;
+    private final CompetitionRepository competitionRepository;
 
     @Autowired
     public ExtraController(AchievementRepository achievementRepository, ClubRepository clubRepository,
                            CoachRepository coachRepository, CoachSportRepository coachSportRepository,
                            PlaceRepository placeRepository, SportRepository sportRepository,
                            SportsmanRepository sportsmanRepository, SportSportsmanRepository repository,
-                           CoachSportsmanRepository coachSportsmanRepository) {
+                           CoachSportsmanRepository coachSportsmanRepository, CompetitionRepository competitionRepository) {
         this.achievementRepository = achievementRepository;
         this.clubRepository = clubRepository;
         this.coachRepository = coachRepository;
@@ -41,6 +42,7 @@ public class ExtraController {
         this.sportsmanRepository = sportsmanRepository;
         this.sportSportsmanRepository = repository;
         this.coachSportsmanRepository = coachSportsmanRepository;
+        this.competitionRepository = competitionRepository;
     }
 
     // #1
@@ -123,6 +125,28 @@ public class ExtraController {
         if (!discharge.isEmpty())
             return coachSportsmanRepository.getSportsmenByIdDischarge(id, discharge);
         return coachSportsmanRepository.getSportsmenById(id);
+    }
+
+    @GetMapping("/sport/byCoach")
+    public List<Object> getSportsByCoach(@RequestParam("id") Integer id) {
+        if (!coachRepository.existsById(id)) return Collections.emptyList();
+        return coachSportRepository.getSportsByCoach(id);
+    }
+
+    @GetMapping("/competition/byPlace")
+    public List<Object> getCompetitionsByPlace(@RequestParam("id") Integer id,
+                                               @RequestParam("type") Integer typeId) {
+        if (!placeRepository.existsById(new PlaceId(id, typeId))) return Collections.emptyList();
+        return competitionRepository.getCompetitionsFromPlace(id, typeId);
+    }
+
+    @GetMapping("/competition/byPlace1")
+    public List<Object> getCompetitionsByPlace(@RequestParam("id") Integer id,
+                                               @RequestParam("type") Integer typeId,
+                                               @RequestParam("sport") Integer sportId) {
+        if (!placeRepository.existsById(new PlaceId(id, typeId)) || !sportRepository.existsById(sportId))
+            return Collections.emptyList();
+        return competitionRepository.getCompetitionsFromPlace(id, typeId, sportId);
     }
 
 }

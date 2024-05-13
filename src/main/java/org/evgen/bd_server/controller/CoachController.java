@@ -1,6 +1,5 @@
 package org.evgen.bd_server.controller;
 
-import org.evgen.bd_server.Consts;
 import org.evgen.bd_server.exceptions.ResourceNotFoundException;
 import org.evgen.bd_server.model.Coach;
 import org.evgen.bd_server.repository.CoachRepository;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = Consts.FRONT)
 @RestController
 @RequestMapping("/data")
 public class CoachController extends ResourceNotFoundHandler {
@@ -44,11 +42,10 @@ public class CoachController extends ResourceNotFoundHandler {
         Coach coachOld = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Coach not exist with id :" + id));
 
-        coachOld.setId(coach.getId());
         coachOld.setName(coach.getName());
 
-        Coach updated = repository.save(coachOld);
-        return ResponseEntity.ok(updated);
+        Coach updated = repository.saveAndFlush(coachOld);
+        return ResponseEntity.ok(updated); //todo разобраться почему не обновляет а сохраняет по-новой
     }
 
     @DeleteMapping("coach/{id}")

@@ -25,4 +25,9 @@ public interface CoachSportsmanRepository extends JpaRepository<CoachSportsman, 
             "WHERE cs.coach.id = :id AND cs.sport = s AND sa.discharge >= :disch AND sa.sportsman = s")
     List<Object> getSportsmenByIdDischarge(@Param("id") Integer param, @Param("disch") String discharge);
 
+    @Query("SELECT cs " +
+            "FROM CoachSportsman cs " +
+            "WHERE cs.coach.id = :cId AND cs.sport.id = :sId")
+    CoachSportsman findBySportsmanIdAndCoachId(@Param("cId") Integer cId, @Param("sId") Integer sId);
+
 }
