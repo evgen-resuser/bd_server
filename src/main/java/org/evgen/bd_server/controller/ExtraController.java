@@ -7,6 +7,7 @@ import org.evgen.bd_server.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,24 +66,26 @@ public class ExtraController {
     @GetMapping("/place/stadium")
     public List<Map<PlaceId, Object>> findStadiumWithParams(
             @RequestParam(value = "covered", defaultValue = "false") Boolean isCovered,
-            @RequestParam(value = "pl_mx", defaultValue = "1000000") Integer placesCountMax,
             @RequestParam(value = "pl_mn", defaultValue = "0") Integer placesCountMin,
-            @RequestParam(value = "sq_mx", defaultValue = "1000000") Float squareMax,
             @RequestParam(value = "sq_mn", defaultValue = "0") Float squareMin) {
 
-        return placeRepository.getStadiumsByParams(isCovered, placesCountMax, placesCountMin, squareMax, squareMin);
+        return placeRepository.getStadiumsByParams(isCovered, placesCountMin, squareMin);
     }
 
     @GetMapping("/place/pool")
     public List<Map<PlaceId, Object>> findPoolsWithParams(
-            @RequestParam(value = "lane_mx", defaultValue = "100000") Integer lanesMax,
             @RequestParam(value = "lane_mn", defaultValue = "0") Integer lanesMin,
-            @RequestParam(value = "dep_mx", defaultValue = "100000") Integer depthMax,
             @RequestParam(value = "dep_mn", defaultValue = "0") Integer depthMin,
-            @RequestParam(value = "len_mx", defaultValue = "100000") Integer lenMax,
             @RequestParam(value = "len_mn", defaultValue = "0") Integer lenMin
     ){
-        return placeRepository.getPoolsByParams(lanesMax, lanesMin, depthMax, depthMin, lenMax, lenMin);
+        return placeRepository.getPoolsByParams(lanesMin, depthMin, lenMin);
+    }
+
+    @GetMapping("/place/gym")
+    public List<Map<PlaceId, Object>> findGymsWithParams(
+            @RequestParam(value = "sq_mn", defaultValue = "0") Integer squareMin
+    ){
+        return placeRepository.getGymsByParams(squareMin);
     }
 
     @GetMapping("/sportsman/bySport")
@@ -103,9 +106,9 @@ public class ExtraController {
         return sportSportsmanRepository.findMoreThanOneSport();
     }
 
-    @GetMapping("/sportsman/sports")
-    public List<SportSportsman> getAll() {
-        return sportSportsmanRepository.findAll();
+    @GetMapping("/sportsman/sports/{id}")
+    public List<Object> getAll(@PathVariable Integer id) {
+        return sportSportsmanRepository.findSportsOfSportsman(id);
     }
 
     @GetMapping("/sportsman/coaches")
@@ -147,6 +150,48 @@ public class ExtraController {
         if (!placeRepository.existsById(new PlaceId(id, typeId)) || !sportRepository.existsById(sportId))
             return Collections.emptyList();
         return competitionRepository.getCompetitionsFromPlace(id, typeId, sportId);
+    }
+
+    @GetMapping("/competition/bySportsman")
+    public List<Object> getCompetitionsBySportsman(@RequestParam("id") Integer id){
+        if (!sportsmanRepository.existsById(id)) return Collections.emptyList();
+        return competitionRepository.getCompetitionsOfSportsman(id);
+    }
+
+    @GetMapping("/competition/org")
+    public List<Object> getCompetitionByPeriod(@RequestParam("org") Integer org){
+        return competitionRepository.getCompetitionsByPeriod(org);
+    }
+
+    @GetMapping("/competition/periodOrg")
+    public List<Object> getCompetitionByPeriodAndOrganize(@RequestParam("start") Date start,
+                                                          @RequestParam("end") Date end,
+                                                          @RequestParam("org") Integer orgId){
+        return competitionRepository.getCompetitionsByPeriodAndOrganize(start, end, orgId);
+    }
+
+    @GetMapping("/competition/notPartSportsmen")
+    public List<Object> getNotParticipatingSportsmen(@RequestParam("start") Date start,
+                                                     @RequestParam("end") Date end) {
+        return competitionRepository.findSportsmenNotParticipatingInPeriod(start, end);
+    }
+
+    @GetMapping("/organize/periodCount")
+    public List<Object> getOrganize(@RequestParam("start") Date start,
+                                      @RequestParam("end") Date end) {
+        return competitionRepository.getOrganizersAndNumberOfCompetitions(start, end);
+    }
+
+    @GetMapping("/place/period")
+    public List<Object> placesByPeriod(@RequestParam("start") Date start,
+                                    @RequestParam("end") Date end) {
+        return competitionRepository.getPlacesByPeriod(start, end);
+    }
+
+    @GetMapping("/club/sportsmenCount")
+    public List<Object> getClubSportsmenCountByPeriod(@RequestParam("start") Date start,
+                                                      @RequestParam("end") Date end) {
+        return competitionRepository.getClubSportsmenCountByPeriod(start, end);
     }
 
 }

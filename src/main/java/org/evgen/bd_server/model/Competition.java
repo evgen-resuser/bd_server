@@ -24,23 +24,8 @@ public class Competition {
     private Sport sport;
 
     @ManyToOne
-    @JoinColumn(name = "fst_id", referencedColumnName = "id")
-    private Sportsman first;
-
-    @ManyToOne
-    @JoinColumn(name = "snd_id", referencedColumnName = "id")
-    private Sportsman second;
-
-    @ManyToOne
-    @JoinColumn(name = "thd_id", referencedColumnName = "id")
-    private Sportsman third;
-
-    private String organize;
+    @JoinColumn(name = "organize", referencedColumnName = "id")
+    private Organize organize;
 
     private Date date;
-
-    public PlaceId getPlaceIdInstance() {
-        return new PlaceId(placeTypeId, placeId);
-    }
-
 }

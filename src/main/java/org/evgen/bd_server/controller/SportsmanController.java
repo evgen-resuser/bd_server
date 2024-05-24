@@ -71,7 +71,8 @@ public class SportsmanController extends ResourceNotFoundHandler {
     @DeleteMapping("/sportsman/{id}")
     public boolean delete(@PathVariable int id){
         if (!repository.existsById(id)) return false;
-        repository.deleteById(id);
+        Sportsman toDelete = repository.findById(id).orElse(null);
+        repository.delete(toDelete);
         return true;
     }
 

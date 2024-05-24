@@ -38,4 +38,16 @@ INSERT INTO place(id, type_id, name, address, stadium_is_covered, stadium_places
 (1, 3, 'Стадион школы №228', 'Ленина, 1', true, 75, 100),
 (2, 3, 'Центральный стадион', 'Победы, 14', false, 250, 300);
 
+INSERT INTO organize(name) VALUES
+                               ('Спорткомитет города'),
+                               ('Администрация школы №228');
+
+INSERT INTO competition(place_id, place_type_id, sport_id, date, organize) VALUES
+    (2, 3, 5, '2024-05-10', 1);
+
+INSERT INTO competitions_participation(comp_id, sportsman_id, place) VALUES
+    (1, 4, 1);
+
+INSERT INTO competitions_participation(comp_id, sportsman_id, place) VALUES
+   (1, 1, 0);
 

@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS coach (
 );
 
 CREATE TABLE IF NOT EXISTS coach_sport (
-coach_id int REFERENCES coach(id) NOT NULL,
-sport_id int REFERENCES sport(id) NOT NULL,
+coach_id int REFERENCES coach(id) ON DELETE CASCADE NOT NULL,
+sport_id int REFERENCES sport(id) ON DELETE CASCADE NOT NULL,
 PRIMARY KEY(coach_id, sport_id)
 );
 
@@ -22,18 +22,18 @@ CREATE TABLE IF NOT EXISTS club (
 CREATE TABLE IF NOT EXISTS sportsman (
     id serial PRIMARY KEY,
     name text NOT NULL,
-    club_id int REFERENCES club(id)
+    club_id int REFERENCES club(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS coach_sportsman (
     id serial PRIMARY KEY,
-    coach_id int REFERENCES coach(id),
-    sportsman_id int REFERENCES sport(id)
+    coach_id int REFERENCES coach(id) ON DELETE CASCADE,
+    sportsman_id int REFERENCES sport(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS sport_achievement (
     id serial PRIMARY KEY,
-    sportsman_id int REFERENCES sportsman(id) NOT NULL,
+    sportsman_id int REFERENCES sportsman(id) ON DELETE CASCADE NOT NULL,
     name text NOT NULL,
     discharge int,
     coach_id int REFERENCES coach(id)
@@ -137,17 +137,27 @@ CREATE TABLE IF NOT EXISTS competition (
                              place_type_id int,
                              FOREIGN KEY (place_id, place_type_id) REFERENCES place(id, type_id),
                              sport_id int REFERENCES sport(id) NOT NULL,
-                             fst_id int REFERENCES sportsman(id) NOT NULL,
-                             snd_id int REFERENCES sportsman(id),
-                             thd_id int REFERENCES sportsman(id),
                              date date NOT NULL,
-                            organize text NOT NULL
+                            organize int NOT NULL REFERENCES organize(id)
+);
+
+CREATE TABLE IF NOT EXISTS competitions_participation (
+    comp_id int REFERENCES competition(id) ON DELETE CASCADE,
+    sportsman_id int references sportsman(id) ON DELETE CASCADE,
+    place int NOT null ,
+    PRIMARY KEY (comp_id, sportsman_id, place)
 );
 
 CREATE TABLE IF NOT EXISTS sport_sportsman (
-    sportsman_id int REFERENCES sportsman(id) NOT NULL ,
-    sport_id int REFERENCES sport(id) NOT NULL ,
+    sportsman_id int REFERENCES sportsman(id) ON DELETE CASCADE NOT NULL ,
+    sport_id int REFERENCES sport(id) ON DELETE CASCADE NOT NULL ,
     id serial PRIMARY KEY
 );
+
+CREATE TABLE IF NOT EXISTS organize (
+    id serial PRIMARY KEY,
+    name text
+)
+
 
 

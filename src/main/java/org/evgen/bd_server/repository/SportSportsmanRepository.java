@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SportSportsmanRepository extends JpaRepository<SportSportsman, Integer> {
 
-    @Query("SELECT new map(s as sportsman, STRING_AGG(sp.name, ', ') as sports) " +
+    @Query("SELECT s " +
             "FROM SportSportsman ss " +
             "JOIN ss.sportsmanId s " +
             "JOIN ss.sportId sp " +
@@ -22,8 +22,11 @@ public interface SportSportsmanRepository extends JpaRepository<SportSportsman, 
     @Query("SELECT s FROM SportSportsman ss, Sportsman s WHERE ss.sportId.id = :sId AND s = ss.sportsmanId ")
     List<Object> findBySport(@Param("sId") Integer sportId);
 
-    @Query("SELECT new map(s as sportsman, a.discharge as discharge) FROM Sportsman s, SportSportsman ss, SportAchievement a " +
+    @Query("SELECT s FROM Sportsman s, SportSportsman ss, SportAchievement a " +
             "WHERE ss.sportId.id = :sport AND s.id = ss.sportsmanId.id AND " +
             "a.sportsman.id = ss.sportsmanId.id AND a.discharge >= :disch")
     List<Object> findBySportAndDischarge(@Param("sport") Integer sportId, @Param("disch") String discharge);
+
+    @Query("SELECT s FROM Sport s, SportSportsman ss WHERE s.id = ss.sportId.id AND ss.sportsmanId.id = :id")
+    List<Object> findSportsOfSportsman(@Param("id") Integer id);
 }
